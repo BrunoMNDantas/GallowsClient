@@ -1,0 +1,23 @@
+<div class="container">
+  <div class="row">
+    <div class="col-12 text-center">
+      <h1>
+        Gallows
+      </h1>
+    </div>
+  </div>
+
+  <div id="text" class="row">
+    <div class="col-6 align-self-center">
+      {{text}}
+    </div>
+
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text">></span>
+      </div>
+      <input (keyup.enter)="enterClick()" type="text" class="form-control" aria-label="Amount (to the nearest dollar)" value="{{userInput}}">
+    </div>
+    
+  </div>
+</div>
