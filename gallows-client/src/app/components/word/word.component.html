@@ -1,0 +1,13 @@
+<div *ngIf="word">
+    <mat-grid-list [cols]="word.length" rowHeight="30px">
+        <mat-grid-tile [colspan]="word.length" [rowspan]="1">
+            {{position}}
+        </mat-grid-tile>
+        <mat-grid-tile [class]="'letter mat-grid-tile'" [colspan]="1" [rowspan]="1" *ngFor="let letter of word.split('')">
+            {{letter}}
+        </mat-grid-tile>
+        <mat-grid-tile [colspan]="1" [rowspan]="1" *ngFor="let letter of word.split(''); let i = index">
+            {{i}}
+        </mat-grid-tile>
+    </mat-grid-list>
+</div>

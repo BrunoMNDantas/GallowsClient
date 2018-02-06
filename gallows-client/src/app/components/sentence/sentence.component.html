@@ -1,0 +1,5 @@
+<mat-grid-list id="grid" [cols]="lettersCount > 0 ? lettersCount : 1" rowHeight="100px" gutterSize="25px">
+    <mat-grid-tile [colspan]="word.length" [rowspan]="1" *ngFor="let word of words">
+        <app-word [word]="word.str" [position]="word.position" [style.width]="'-webkit-fill-available'"></app-word>
+    </mat-grid-tile>
+</mat-grid-list>

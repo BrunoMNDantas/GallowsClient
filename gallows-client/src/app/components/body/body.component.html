@@ -1,0 +1,17 @@
+<mat-grid-list cols="4" rowHeight="100px">
+    <mat-grid-tile [colspan]="3" [rowspan]="1">
+        <app-sentence [style.width]="'-webkit-fill-available'" [sentence]="sentence"></app-sentence>
+    </mat-grid-tile>
+
+    <mat-grid-tile [colspan]="1" [rowspan]="3">
+        <app-included [style.width]="'-webkit-fill-available'" [included]="included"></app-included>
+    </mat-grid-tile>
+
+    <mat-grid-tile [colspan]="3" [rowspan]="5">
+        <app-console #console [style.width]="'-webkit-fill-available'"></app-console>
+    </mat-grid-tile>
+
+    <mat-grid-tile [colspan]="1" [rowspan]="3">
+        <app-excluded [style.width]="'-webkit-fill-available'" [excluded]="excluded"></app-excluded>
+    </mat-grid-tile>
+</mat-grid-list>
