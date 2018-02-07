@@ -1,4 +1,4 @@
-<mat-grid-list id="grid" cols="1" rowHeight="50px">
+<mat-grid-list id="grid" cols="1" rowHeight="50px" (click)="userInput.focus()">
     <mat-grid-tile [colspan]="1" [rowspan]="9">
         <div #textElem id="text" class="item">
             {{text}}
@@ -6,7 +6,7 @@
     </mat-grid-tile>
     <mat-grid-tile [colspan]="1" [rowspan]="1">
         <mat-form-field class="item">
-          <input matInput type="text" [(ngModel)]="input" (keyup.enter)="onEnter()">
+          <input #userInput matInput type="text" [(ngModel)]="input" (keyup.enter)="onEnter()" autofocus>
           <span matPrefix>></span>
         </mat-form-field>
     </mat-grid-tile>
