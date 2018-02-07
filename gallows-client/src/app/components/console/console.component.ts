@@ -32,7 +32,8 @@ export class ConsoleComponent implements OnInit {
 
     writeLine(line : string) {
         this.text += "\n" + line;
-        this.scrollToBottom();
+
+        setTimeout(() => this.scrollToBottom(), 100); /*wait some time to scroll count height with this new line*/
     }
 
     scrollToBottom(): void {
