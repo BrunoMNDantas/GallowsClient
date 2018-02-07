@@ -70,6 +70,8 @@ export class EngineService {
                                         else
                                             return this.getSentence(gallowsId, context);
                                     });
+                                else
+                                    return null;
                             });
                         }));
                     });
@@ -181,15 +183,20 @@ export class EngineService {
         .then((finishedWords) => {
             context.logger("Finished words : " + finishedWords);
 
-            return context.completedWordsPredicate(finishedWords)
-            .then((allWordsInSentence) => {
-                context.logger("All words in sentence : " + allWordsInSentence);
-                return allWordsInSentence;
-            })
-            .catch((error) => {
-                context.logger("Error checking finished words! Error : " + error);
-                throw error;
-            });
+            if(finishedWords.length === 0) {
+                context.logger("No words found.");
+                return true;
+            } else {
+                return context.completedWordsPredicate(finishedWords)
+                .then((allWordsInSentence) => {
+                    context.logger("All words in sentence : " + allWordsInSentence);
+                    return allWordsInSentence;
+                })
+                .catch((error) => {
+                    context.logger("Error checking finished words! Error : " + error);
+                    throw error;
+                });
+            }
         })
         .catch((error) => {
             context.logger("Error getting finished words from Server! Error : " + error);
