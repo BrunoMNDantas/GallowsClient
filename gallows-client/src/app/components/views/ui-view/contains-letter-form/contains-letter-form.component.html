@@ -1,0 +1,13 @@
+<mat-grid-list cols="2" rowHeight="200px">
+    <mat-grid-tile [colspan]="2" [rowspan]="1">
+        Does your sentence contains letter '{{letter}}'?
+    </mat-grid-tile>
+
+    <mat-grid-tile [colspan]="1" [rowspan]="1">
+        <button mat-raised-button color="primary" (click)="yesClick()">Yes</button>
+    </mat-grid-tile>
+
+    <mat-grid-tile [colspan]="1" [rowspan]="1">
+        <button mat-raised-button color="primary" (click)="noClick()">No</button>
+    </mat-grid-tile>
+</mat-grid-list>

@@ -1,0 +1,26 @@
+<mat-grid-list cols="2" rowHeight="100px">
+    <mat-grid-tile [colspan]="2" [rowspan]="1">
+        Words Lengths:
+        <div class="length" *ngFor="let length of wordsLength">
+            {{length}}
+        </div>
+    </mat-grid-tile>
+
+    <mat-grid-tile [colspan]="2" [rowspan]="1">
+        Insert length for word at position {{wordPosition}}
+    </mat-grid-tile>
+
+    <mat-grid-tile [colspan]="2" [rowspan]="1">
+        <mat-form-field>
+            <input #length type="number" matInput placeholder="Length">
+        </mat-form-field>
+    </mat-grid-tile>
+
+    <mat-grid-tile [colspan]="1" [rowspan]="1">
+        <button mat-raised-button color="primary" (click)="addWordClick(length.value)">Add word</button>
+    </mat-grid-tile>
+
+    <mat-grid-tile [colspan]="1" [rowspan]="1">
+        <button mat-raised-button color="primary" (click)="noMoreWordsClick()">No more words</button>
+    </mat-grid-tile>
+</mat-grid-list>
