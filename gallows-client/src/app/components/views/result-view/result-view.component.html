@@ -1,0 +1,13 @@
+<mat-grid-list cols="1" rowHeight="100px">
+    <mat-grid-tile [colspan]="1" [rowspan]="3">
+        <img id="image" [src]="image"/>
+    </mat-grid-tile>
+
+    <mat-grid-tile [colspan]="1" [rowspan]="1">
+        {{message}}
+    </mat-grid-tile>
+
+    <mat-grid-tile [colspan]="1" [rowspan]="1">
+        <a mat-raised-button routerLink="/select-mode" color="primary">Try Again</a>
+    </mat-grid-tile>
+</mat-grid-list>
