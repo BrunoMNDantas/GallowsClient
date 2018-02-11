@@ -1,74 +1,78 @@
 import { Injectable } from '@angular/core';
 import { GallowsService } from './gallows.service';
-import { Context } from './context';
+import { InputService } from './input.service';
+import { StateService } from './state.service';
 
 @Injectable()
 export class EngineService {
 
-    constructor(private gallowsService : GallowsService) { }
+    constructor(
+        private stateService : StateService,
+        private inputService : InputService,
+        private gallowsService : GallowsService) { }
 
 
 
-    run(context : Context) : Promise<string> {
-        context.logger("::STARTED::");
+    run() : Promise<string> {
+        this.stateService.logInfo("::STARTED::");
 
-        return this.getWordsLength(context)
+        return this.getWordsLength()
         .then((wordsLength) => {
-            return this.createGallows(wordsLength, context)
+            return this.createGallows(wordsLength)
             .then((gallowsId) => {
-                return this.nextIteration(gallowsId, context)
+                return this.nextIteration(gallowsId)
                 .then((sentence) => {
-                    context.logger("::FINISHED::");
+                    this.stateService.logInfo("::FINISHED::");
                     return sentence;
                 });
             });
         });
     }
 
-    getWordsLength(context : Context) : Promise<number[]> {
-        return context.lengthsSupplier()
+    getWordsLength() : Promise<number[]> {
+        return this.inputService.requireWordsLength()
         .then((wordsLength) => {
-            context.logger("Words length : " + wordsLength);
+            this.stateService.logInfo("Words length : " + wordsLength);
             return wordsLength;
         })
         .catch((error) => {
-            context.logger("Error getting words length! Error : " + error);
+            this.stateService.logError("Error getting words length! Error : " + error);
             throw error;
         });
     }
 
-    createGallows(wordsLength : number[], context : Context) : Promise<any>{
+    createGallows(wordsLength : number[]) : Promise<any>{
         return this.gallowsService.createGallows(wordsLength)
         .then((gallowsId) => {
-            context.logger("GallowsID : " + gallowsId);
+            this.stateService.logInfo("GallowsID : " + gallowsId);
             return gallowsId;
         })
         .catch((error) => {
-            context.logger("Error creating gallows on Server! Error : " + error);
+            this.stateService.logError("Error creating gallows on Server! Error : " + error);
             throw error;
         });
     }
 
-    nextIteration(gallowsId : any, context : Context) : Promise<string> {
-        return this.getSentence(gallowsId, context)
+    nextIteration(gallowsId : any) : Promise<string> {
+        return this.getSentence(gallowsId)
         .then((sentence) => {
-            return this.getLetter(gallowsId, context)
+            return this.getLetter(gallowsId)
             .then((letter)=>{
-                return this.testLetter(gallowsId, letter, context)
+                return this.testLetter(gallowsId, letter)
                 .then((containsLetter) => {
-                    return this.treatLetter(gallowsId, letter, containsLetter, context)
+                    return this.treatLetter(gallowsId, letter, containsLetter)
                     .then(() => {
-                        return this.cleanDictionary(gallowsId, context)
+                        return this.cleanDictionary(gallowsId)
                         .then((() => {
-                            return this.checkForFoundWords(gallowsId, context)
+                            return this.checkForFoundWords(gallowsId)
                             .then((allFoundWordAreInSentence)=>{
                                 if(allFoundWordAreInSentence)
-                                    return this.checkForFinish(gallowsId, context)
+                                    return this.checkForFinish(gallowsId)
                                     .then((finished) => {
                                         if(!finished)
-                                            return this.nextIteration(gallowsId, context);
+                                            return this.nextIteration(gallowsId);
                                         else
-                                            return this.getSentence(gallowsId, context);
+                                            return this.getSentence(gallowsId);
                                     });
                                 else
                                     return null;
@@ -80,138 +84,142 @@ export class EngineService {
         });
     }
 
-    getSentence(gallowsId : any, context : Context) : Promise<string> {
+    getSentence(gallowsId : any) : Promise<string> {
         return this.gallowsService.getSentence(gallowsId)
         .then((sentence) => {
-            context.sentenceLogger(sentence);
+            this.stateService.logInfo("Sentence : " + sentence);
+            this.stateService.updateSentente(sentence);
             return sentence;
         })
         .catch((error) => {
-            context.logger("Error getting sentence from server! Error : " + error);
+            this.stateService.logError("Error getting sentence from server! Error : " + error);
             throw error;
         });
     }
 
-    getLetter(gallowsId : any, context : Context) : Promise<string> {
+    getLetter(gallowsId : any) : Promise<string> {
         return this.gallowsService.getLetter(gallowsId)
         .then((letter) => {
-            context.logger("Letter : " + letter);
+            this.stateService.logInfo("Letter : " + letter);
             return letter;
         })
         .catch((error) => {
-            context.logger("Error : " + error);
+            this.stateService.logError("Error : " + error);
             throw error;
         });
     }
 
-    testLetter(gallowsId : any, letter : string, context : Context) : Promise<boolean> {
-        return context.letterPredicate(letter)
+    testLetter(gallowsId : any, letter : string) : Promise<boolean> {
+        return this.inputService.requireContainsLetter(letter)
         .then((containsLetter) => {
-            if(containsLetter)
-                context.logger("Include : " + letter);
-            else
-                context.logger("Exclude : " + letter);
+            if(containsLetter) {
+                this.stateService.logInfo("Include : " + letter);
+                this.stateService.includeLetter(letter);
+            } else {
+                this.stateService.logInfo("Exclude : " + letter);
+                this.stateService.excludeLetter(letter);
+            }
 
             return containsLetter;
         })
         .catch((error) => {
-            context.logger("Error checking if contains letter! Error : " + error);
+            this.stateService.logError("Error checking if contains letter! Error : " + error);
             throw error;
         });
     }
 
-    treatLetter(gallowsId : any, letter : string, containsLetter : boolean, context : Context) : Promise<void> {
+    treatLetter(gallowsId : any, letter : string, containsLetter : boolean) : Promise<void> {
         if(containsLetter)
-            return this.includeLetter(gallowsId, letter, context);
+            return this.includeLetter(gallowsId, letter);
         else
-            return this.excludeLetter(gallowsId, letter, context);
+            return this.excludeLetter(gallowsId, letter);
     }
 
-    includeLetter(gallowsId : any, letter : string, context : Context) : Promise<void> {
-        return this.getLetterPositions(letter, context)
+    includeLetter(gallowsId : any, letter : string) : Promise<void> {
+        return this.getLetterPositions(letter)
         .then((positions) => {
             return this.gallowsService.includeLetter(gallowsId, letter, positions)
             .then((resp) => {
-                context.logger("Included : " + letter);
+                this.stateService.logInfo("Included : " + letter);
                 return resp;
             })
             .catch((error) => {
-                context.logger("Error including letter on Server! Error : " + error);
+                this.stateService.logError("Error including letter on Server! Error : " + error);
                 throw error;
             });
         });
     }
 
-    getLetterPositions(letterToCheck : string, context : Context) : Promise<any[]> {
-        return context.letterPositionsFunction(letterToCheck)
+    getLetterPositions(letterToCheck : string) : Promise<any[]> {
+        return this.inputService.requireLetterPositions(letterToCheck)
         .then((positions) => {
-            context.logger("Letter positions : " + positions);
+            this.stateService.logInfo("Letter positions : " + positions);
             return positions;
         })
         .catch((error) => {
-            context.logger("Error getting letter positions! Error : " + error);
+            this.stateService.logError("Error getting letter positions! Error : " + error);
             throw error;
         });
     }
 
-    excludeLetter(gallowsId : any, letter : string, context : Context) : Promise<void> {
+    excludeLetter(gallowsId : any, letter : string) : Promise<void> {
         return this.gallowsService.excludeLetter(gallowsId, letter)
         .then((resp) => {
-            context.logger("Excluded : " + letter);
+            this.stateService.logInfo("Excluded : " + letter);
             return resp;
         })
         .catch((error) => {
-            context.logger("Error excluding letter on Server! Error : " + error);
+            this.stateService.logError("Error excluding letter on Server! Error : " + error);
             throw error;
         });
     }
 
-    cleanDictionary(gallowsId : any, context : Context) : Promise<void> {
+    cleanDictionary(gallowsId : any) : Promise<void> {
         return this.gallowsService.cleanGallows(gallowsId)
         .then((resp) => {
-            context.logger("Dictionary cleaned");
+            this.stateService.logInfo("Dictionary cleaned");
             return resp;
         })
         .catch((error) => {
-            context.logger("Error cleaning dictionary on Server! Error : " + error);
+            this.stateService.logError("Error cleaning dictionary on Server! Error : " + error);
             throw error;
         });
     }
 
-    checkForFoundWords(gallowsId : any, context : Context) : Promise<boolean> {
+    checkForFoundWords(gallowsId : any) : Promise<boolean> {
         return this.gallowsService.finishWords(gallowsId)
         .then((finishedWords) => {
-            context.logger("Finished words : " + finishedWords);
+            this.stateService.logInfo("Finished words : " + finishedWords);
 
             if(finishedWords.length === 0) {
-                context.logger("No words found.");
+                this.stateService.logInfo("No words found.");
                 return true;
             } else {
-                return context.completedWordsPredicate(finishedWords)
+                return this.inputService.requireContainsAllWords(finishedWords)
                 .then((allWordsInSentence) => {
-                    context.logger("All words in sentence : " + allWordsInSentence);
+                    this.stateService.logInfo("All words in sentence : " + allWordsInSentence);
                     return allWordsInSentence;
                 })
                 .catch((error) => {
-                    context.logger("Error checking finished words! Error : " + error);
+                    this.stateService.logError("Error checking finished words! Error : " + error);
                     throw error;
                 });
             }
         })
         .catch((error) => {
-            context.logger("Error getting finished words from Server! Error : " + error);
+            this.stateService.logError("Error getting finished words from Server! Error : " + error);
             throw error;
         });
     }
 
-    checkForFinish(gallowsId : any, context : Context) : Promise<boolean> {
+    checkForFinish(gallowsId : any) : Promise<boolean> {
         return this.gallowsService.isFinished(gallowsId)
         .then((finished) => {
-            context.logger("Finished : " + finished);
+            this.stateService.logInfo("Finished : " + finished);
             return finished;
         })
         .catch((error) => {
-            context.logger("Error checking if gallows is finished on Server! Error : " + error);
+            this.stateService.logError("Error checking if gallows is finished on Server! Error : " + error);
             throw error;
         });
     }

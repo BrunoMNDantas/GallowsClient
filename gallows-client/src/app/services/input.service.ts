@@ -1,127 +1,45 @@
 import { EventEmitter } from '@angular/core';
+import { Work, WorkService } from './work.service';
 
 export class InputService {
 
-    requestId : number;
-
-    requiredWordsLengthEvent : EventEmitter<any> = new EventEmitter();
-    suppliedWordsLengthEvent : EventEmitter<any> = new EventEmitter();
-
-    requiredContainsLetterEvent : EventEmitter<any> = new EventEmitter();
-    suppliedContainsLetterEvent : EventEmitter<any> = new EventEmitter();
-
-    requiredLetterPositionsEvent : EventEmitter<any> = new EventEmitter();
-    suppliedLetterPositionsEvent : EventEmitter<any> = new EventEmitter();
-
-    requiredContainsAllWordsEvent : EventEmitter<any> = new EventEmitter();
-    suppliedContainsAllWordsEvent : EventEmitter<any> = new EventEmitter();
+    wordsLengthWorkService : WorkService<void, number[]> = new WorkService();
+    containsLetterWorkService : WorkService<string, boolean> = new WorkService();
+    letterPositionsWorkService : WorkService<string, any[]> = new WorkService();
+    containsAllWordsWorkService : WorkService<string[], boolean> = new WorkService();
 
 
 
-    getNewRequestId() : number {
-        this.requestId = this.requestId + 1;
-        return this.requestId;
+    public requireWordsLength() : Promise<number[]> {
+        return this.wordsLengthWorkService.require(null);
     }
 
-
-    public getWordsLength() : Promise<number[]> {
-        let requestId = this.getNewRequestId();
-
-        return new Promise((resolve, reject) => {
-            let subscrition = this.suppliedWordsLengthEvent.subscribe((response) => {
-                if(response.requestId === requestId) {
-                    resolve(response.lengths);
-                    subscrition.unsubscribe();
-                }
-            });
-
-            this.requiredWordsLengthEvent.emit({requestId: requestId});
-        });
+    public requireWordsLengthRequest() : Promise<Work<void, number[]>> {
+        return this.wordsLengthWorkService.requireRequest();
     }
 
-    public supplyWordsLength(requestId : number, lengths : number[]) {
-        this.suppliedWordsLengthEvent.emit({
-            requestId: requestId,
-            lengths: lengths
-        });
+    public requireContainsLetter(letter : string) : Promise<boolean> {
+        return this.containsLetterWorkService.require(letter);
     }
 
-
-    public containsLetter(letter : string) : Promise<boolean> {
-        let requestId = this.getNewRequestId();
-
-        return new Promise((resolve, reject) => {
-            let subscription = this.suppliedContainsLetterEvent.subscribe((response) => {
-                if(response.requestId === requestId) {
-                    resolve(response.contains);
-                    subscription.unsubscribe();
-                }
-            });
-
-            this.requiredContainsLetterEvent.emit({
-                requestId: requestId,
-                letter: letter
-            });
-        });
+    public requireContainsLetterRequest() : Promise<Work<string, boolean>> {
+        return this.containsLetterWorkService.requireRequest();
     }
 
-    public supplyContainsLetter(requestId : number, contains : boolean) {
-        this.suppliedContainsLetterEvent.emit({
-            requestId : requestId,
-            contains: contains
-        });
+    public requireLetterPositions(letter : string) : Promise<any[]> {
+        return this.letterPositionsWorkService.require(letter);
     }
 
-
-    public getLetterPositions(letter : string) : Promise<any> {
-        let requestId = this.getNewRequestId();
-
-        return new Promise((resolve, reject) => {
-            let subscription = this.suppliedLetterPositionsEvent.subscribe((response) => {
-                if(response.requestId === requestId) {
-                    resolve(response.positions);
-                    subscription.unsubscribe();
-                }
-            });
-
-            this.requiredLetterPositionsEvent.emit({
-                requestId: requestId,
-                letter: letter
-            });
-        });
+    public requireLetterPositionsRequest() : Promise<Work<string, any[]>> {
+        return this.letterPositionsWorkService.requireRequest();
     }
 
-    public supplyLetterPositions(requestId : number, positions : any) {
-        this.suppliedLetterPositionsEvent.emit({
-            requestId: requestId,
-            positions: positions
-        });
+    public requireContainsAllWords(words : string[]) : Promise<boolean> {
+        return this.containsAllWordsWorkService.require(words);
     }
 
-
-    public containsAllWords(words : string[]) : Promise<boolean> {
-        let requestId = this.getNewRequestId();
-
-        return new Promise((resolve, reject) => {
-            let subscription = this.suppliedContainsAllWordsEvent.subscribe((response) => {
-                if(response.requestId === requestId) {
-                    resolve(response.contains);
-                    subscription.unsubcribe();
-                }
-            });
-
-            this.requiredContainsAllWordsEvent.emit({
-                requestId: requestId,
-                words: words
-            });
-        });
-    }
-
-    public suplyContainsAllWords(requestId : number, contains : boolean) {
-        this.suppliedContainsAllWordsEvent.emit({
-            requestId: requestId,
-            contains: contains
-        });
+    public requireContainsAllWordsRequest() : Promise<Work<string[], boolean>> {
+        return this.containsAllWordsWorkService.requireRequest();
     }
 
 }
