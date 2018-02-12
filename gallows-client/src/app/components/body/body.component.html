@@ -8,7 +8,9 @@
     </mat-grid-tile>
 
     <mat-grid-tile [colspan]="3" [rowspan]="5">
-        <app-console #console [style.width]="'-webkit-fill-available'"></app-console>
+        <div [style.width]="'-webkit-fill-available'">
+            <router-outlet></router-outlet>
+        </div>
     </mat-grid-tile>
 
     <mat-grid-tile [colspan]="1" [rowspan]="3">

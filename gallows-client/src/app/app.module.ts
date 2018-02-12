@@ -1,46 +1,27 @@
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgModule } from '@angular/core';
-import { MaterialModule } from './material.module';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
-import { AppComponent } from './app.component';
-import { HeaderComponent } from './components/header/header.component';
-import { BodyComponent } from './components/body/body.component';
-import { SentenceComponent } from './components/sentence/sentence.component';
-import { ConsoleComponent } from './components/console/console.component';
-import { IncludedComponent } from './components/included/included.component';
-import { ExcludedComponent } from './components/excluded/excluded.component';
-import { WordComponent } from './components/word/word.component';
+import { ComponentsModule } from './components.module';
+import { ServicesModule } from './services.module';
+import { MaterialModule } from './material.module';
 
-import {  EngineService } from './services/engine.service';
-import {  GallowsService } from './services/gallows.service';
-import {  HttpUtils } from './services/http-utils';
+import { AppComponent } from './app.component';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    HeaderComponent,
-    BodyComponent,
-    SentenceComponent,
-    ConsoleComponent,
-    IncludedComponent,
-    ExcludedComponent,
-    WordComponent
-  ],
+  declarations: [ AppComponent ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    MaterialModule,
     FormsModule,
-    HttpModule
+    HttpModule,
+    ComponentsModule,
+    ServicesModule,
+    MaterialModule
   ],
-  providers: [
-      EngineService,
-      GallowsService,
-      HttpUtils
-  ],
-  bootstrap: [AppComponent]
+  providers: [ ],
+  bootstrap: [ AppComponent ]
 })
 export class AppModule { }

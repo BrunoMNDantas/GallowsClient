@@ -30,6 +30,9 @@ export class WordsLengthFormComponent implements OnInit {
     }
 
     noMoreWordsClick() {
+        if(this.wordsLength.length === 0)
+            return;
+            
         this.lengths.emit(this.wordsLength);
         this.wordPosition = 1;
         this.wordsLength = [];
