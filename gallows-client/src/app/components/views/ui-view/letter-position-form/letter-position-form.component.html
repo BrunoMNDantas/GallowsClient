@@ -1,0 +1,17 @@
+<mat-grid-list [cols]="lettersCount > 0 ? lettersCount : 1" rowHeight="100px">
+    <mat-grid-tile [colspan]="lettersCount" [rowspan]="1">
+        Select positions of letter '{{letter}}'
+    </mat-grid-tile>
+
+    <mat-grid-tile *ngIf="lettersCount > 0" [colspan]="lettersCount" [rowspan]="2">
+        <mat-grid-list [style.width]="'-webkit-fill-available'" [cols]="lettersCount" rowHeight="100px" gutterSize="25px">
+            <mat-grid-tile [colspan]="word.length" [rowspan]="2" *ngFor="let word of sentence.split(' '); let wordIdx=index">
+                <app-select-letter [word]="word" [style.width]="'-webkit-fill-available'" (checked)="checkedClick(wordIdx, $event)"></app-select-letter>
+            </mat-grid-tile>
+        </mat-grid-list>
+    </mat-grid-tile>
+
+    <mat-grid-tile [colspan]="lettersCount" [rowspan]="1">
+         <button mat-raised-button color="primary" (click)="doneClick()">Done</button>
+    </mat-grid-tile>
+</mat-grid-list>

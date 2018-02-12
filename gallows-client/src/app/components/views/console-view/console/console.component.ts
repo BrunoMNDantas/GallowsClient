@@ -36,6 +36,10 @@ export class ConsoleComponent implements OnInit {
         setTimeout(() => this.scrollToBottom(), 100); /*wait some time to scroll count height with this new line*/
     }
 
+    clear() {
+        this.text = "";
+    }
+
     scrollToBottom(): void {
         try {
             let height = this.textElement.nativeElement.scrollHeight;

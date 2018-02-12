@@ -1,0 +1,8 @@
+<mat-grid-list [cols]="word.length" rowHeight="100px" gutterSize="2px">
+    <mat-grid-tile class="letter" [colspan]="1" [rowspan]="1" *ngFor="let letter of word.split('')">
+        {{letter}}
+    </mat-grid-tile>
+    <mat-grid-tile [colspan]="1" [rowspan]="1" *ngFor="let letter of word.split(''); let letterIdx=index">
+        <mat-checkbox [checked]="false" [disabled]="letter.match('[a-z]')" (click)="checked.emit(letterIdx)"></mat-checkbox>
+    </mat-grid-tile>
+</mat-grid-list>

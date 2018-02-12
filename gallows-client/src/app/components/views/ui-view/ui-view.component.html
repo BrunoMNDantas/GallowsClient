@@ -1,0 +1,18 @@
+<app-words-length-form
+    [hidden]="!wordsLengthFormVisibility"
+    (lengths)="wordsLengthEvent.emit($event)"></app-words-length-form>
+<app-contains-letter-form
+    [hidden]="!containsLetterFormVisibility"
+    [letter]="checkingLetter"
+    (contains)="containsLetterEvent.emit($event)"></app-contains-letter-form>
+<app-letter-position-form
+    [hidden]="!letterPositionsFormVisibility"
+    [sentence]="sentence"
+    [letter]="checkingLetterPositions"
+    (positions)="letterPositionsEvent.emit($event)"></app-letter-position-form>
+<app-contains-words-form
+    [hidden]="!containsWordsFormVisibility"
+    [words]="checkingWords"
+    (contains)="containsWordsEvent.emit($event)"></app-contains-words-form>
+<mat-spinner
+    [hidden]="wordsLengthFormVisibility || containsLetterFormVisibility || letterPositionsFormVisibility || containsWordsFormVisibility"></mat-spinner>
